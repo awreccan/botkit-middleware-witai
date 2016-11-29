@@ -8,14 +8,14 @@ module.exports = function(accessToken, actions) {
 
     middleware.receive = function(bot, message, next) {
         if (message.text) {
-            client
-                .message(message.text, {})
-                .then((data) => {
-                    message.entities = data.entities;
-                    next();
+            const sessionId = uuid.v1();
+            const steps = 5;
+            let context = {};
+            client.runActions(sessionId, message.text, context, steps)
+                .then((ctx) => {
+                    context = ctx;
                 })
-                .catch((err) => next(err));
-
+                .catch(err => console.error(err))
         } else {
             next();
         }
