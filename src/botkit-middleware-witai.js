@@ -1,34 +1,21 @@
 var Wit = require('node-wit').Wit;
 
-module.exports = function(config, actions) {
+module.exports = function(accessToken, actions) {
 
-    if (!config || !config.token) {
-        throw new Error('No wit.ai API token specified');
-    }
-
-    if (!config.minimum_confidence) {
-        config.minimum_confidence = 0.5;
-    }
-
-    var client = new Wit(config.token, actions);
+    var client = new Wit({accessToken, actions});
 
     var middleware = {};
 
     middleware.receive = function(bot, message, next) {
-        // Only parse messages of type text and mention the bot.
-        // Otherwise it would send every single message to wit (probably don't want that).
-        if (message.text && message.text.indexOf(bot.identity.id) > -1) {
-            client.message(message.text, function(error, data) {
-                if (error) {
-                    next(error);
-                } else {
+        if (message.text) {
+            client
+                .message(message.text, {})
+                .then((data) => {
                     message.entities = data.entities;
                     next();
-                }
-            });
-        } else if (message.attachments) {
-            message.intents = [];
-            next();
+                })
+                .catch(() => next());
+
         } else {
             next();
         }
