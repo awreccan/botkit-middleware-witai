@@ -14,7 +14,7 @@ module.exports = function(accessToken, actions) {
                     message.entities = data.entities;
                     next();
                 })
-                .catch(() => next());
+                .catch((err) => next(err));
 
         } else {
             next();
