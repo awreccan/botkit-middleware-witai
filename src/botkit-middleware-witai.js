@@ -1,20 +1,6 @@
 var Wit = require('node-wit').Wit;
 
-// not used at the moment
-var actions = {
-    say: function(sessionId, context, message, cb) {
-        console.log(message);
-        cb();
-    },
-    merge: function(sessionId, context, entities, message, cb) {
-        cb(context);
-    },
-    error: function(sessionId, context, error) {
-        console.log(error.message);
-    }
-};
-
-module.exports = function(config) {
+module.exports = function(config, actions) {
 
     if (!config || !config.token) {
         throw new Error('No wit.ai API token specified');
